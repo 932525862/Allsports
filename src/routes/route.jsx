@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout'
 import News from '../components/News/news'
 import CategoryOnePage from '../pages/Category/components/category'
 import MassageOnePage from '../pages/Category/components/Massage'
-
+ 
 // Pages
 const Home = lazy(() => import('@/pages/Home'))
 const About = lazy(() => import('@/pages/About'))
