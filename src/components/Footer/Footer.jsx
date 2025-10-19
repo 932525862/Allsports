@@ -49,7 +49,6 @@ function Footer() {
     getCategory()
   }, [])
 
-  console.log(data)
   return (
     <footer className="bg-gray-50 pt-10">
       <div className="max-w-7xl mx-auto">
