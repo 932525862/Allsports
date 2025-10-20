@@ -122,6 +122,7 @@ const CategoryPage = () => {
       }
       setProducts(data);
       setTotalPages(res?.data?.meta?.totalPages || 1);
+      console.log(`Pagination`, res?.data);
     } catch (error) {
       console.error(`Error while getting products: ${error}`);
     }
@@ -265,7 +266,7 @@ const CategoryPage = () => {
                 <PaginationComponent
                   totalPages={totalPages}
                   currentPage={currentPage}
-                  onPageChange={(page) => handleProductFiler(page)}
+                  onPageChange={(page) => handleProductFilter(page)}
                 />
               )
             )}
