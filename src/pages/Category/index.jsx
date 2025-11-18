@@ -17,47 +17,65 @@ const CategoryPage = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   const { slug } = useParams();
+
   const base_url = import.meta.env.VITE_API_BASE_URL;
+
   const [categories, setCategories] = useState([]);
 
   const normalize = (s) =>
     (s ?? "")
+
       .toString()
+
       .normalize("NFKC")
+
       .replace(/\s+/g, " ")
+
       .trim()
+
       .toLowerCase();
 
   const getCategories = async () => {
     setLoading(true);
+
     try {
       const res = await axios.get(`${base_url}/api/categories`);
+
       const list = res?.data?.data ?? [];
+
       setCategories(list);
 
       if (slug) {
         const decoded = decodeURIComponent(slug);
+
         const normalizedSlug = normalize(decoded);
 
         const match = list.find((cat) => {
           const candidate = normalize(cat?.name?.uz);
+
           console.log(
             JSON.stringify({
               candidate: cat?.name?.uz,
+
               candidateNorm: candidate,
+
               slug: decoded,
+
               slugNorm: normalizedSlug,
             })
           );
+
           return candidate === normalizedSlug;
         });
 
         console.log(match, "Matched category", decoded, "(decoded from slug)");
+
         if (match) {
           setSelectedCategories(match?.name?.uz ?? "");
         } else {
           console.warn(
             "No exact match for slug. Available categories:",
+
             list.map((c) => c?.name?.uz)
           );
         }
@@ -73,12 +91,17 @@ const CategoryPage = () => {
 
   const handleProductFilter = async (page = 1, nameQuery = "") => {
     setLoading(true);
+
     try {
       const queryParams = new URLSearchParams();
+
       if (selectedCategories)
         queryParams.append("category", selectedCategories);
+
       if (priceRange[0]) queryParams.append("minPrice", priceRange[0]);
+
       if (priceRange[1]) queryParams.append("maxPrice", priceRange[1]);
+
       if (nameQuery) queryParams.append("name", nameQuery);
 
       const res = await axios.get(
@@ -86,7 +109,9 @@ const CategoryPage = () => {
       );
 
       setProducts(res?.data?.data || []);
+
       setTotalPages(res?.data?.meta?.totalPages || 1);
+
       setCurrentPage(page);
     } catch (error) {
       console.error(`Error while filtering products: ${error}`);
@@ -95,38 +120,40 @@ const CategoryPage = () => {
     }
   };
 
-  useEffect(() => {
-    getCategories();
-    if (!slug) getProducts();
-  }, [slug]);
-
-  useEffect(() => {
-    if (slug && selectedCategories) handleProductFilter();
-  }, [selectedCategories]);
-
-  useEffect(() => {
-    const trimmed = searchName.trim();
-    if (trimmed.length > 2 || trimmed.length === 0) {
-      handleProductFilter(1, trimmed);
-    }
-  }, [searchName]);
-
   const getProducts = async () => {
     try {
       const res = await axios.get(`${base_url}/api/products?page=1&limit=10`);
       let data = res?.data?.data || [];
+
       if (slug) {
         data = data.filter(
           (item) => item.category?.name?.uz === decodeURIComponent(slug)
         );
       }
+
       setProducts(data);
+
       setTotalPages(res?.data?.meta?.totalPages || 1);
+
       console.log(`Pagination`, res?.data);
     } catch (error) {
       console.error(`Error while getting products: ${error}`);
     }
   };
+
+  useEffect(() => {
+    getCategories();
+  }, [slug]);
+
+  useEffect(() => {
+    if (selectedCategories || !slug) {
+      const trimmed = searchName.trim();
+
+      if (trimmed.length > 2 || trimmed.length === 0) {
+        handleProductFilter(1, trimmed);
+      }
+    }
+  }, [selectedCategories, priceRange, searchName]);
 
   return (
     <div className="min-h-screen bg-gray-50">
