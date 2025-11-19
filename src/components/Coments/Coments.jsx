@@ -29,7 +29,7 @@ export default function Coments() {
   const videoRefs = useRef([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [playing, setPlaying] = useState(videos.map(() => false));
+ 
 
   const toggleAtIndex = (index) => {
     const v = videoRefs.current[index];
@@ -37,13 +37,13 @@ export default function Coments() {
     if (v.paused) {
       const p = v.play();
       if (p && typeof p.then === 'function') p.catch(() => {});
-      // stop swiper autoplay while playing
+    
       if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.stop === 'function') {
         try { swiperRef.current.autoplay.stop(); } catch (err) { void err; }
       }
     } else {
       v.pause();
-      // restart swiper autoplay when user pauses
+    
       if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.start === 'function') {
         try { swiperRef.current.autoplay.start(); } catch (err) { void err; }
       }
@@ -55,17 +55,58 @@ export default function Coments() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Pause all videoswhenever the active slide changes to ensure nothing auto-plays
   useEffect(() => {
     if (!videoRefs.current) return;
     videoRefs.current.forEach((v) => {
       try {
         v && v.pause();
-      } catch {
-        // ignore
-      }
+      } catch (err) { void err; }
     });
   }, [activeIndex]);
+
+  // Pause swiper autoplay when any video starts playing,
+  // and resume autoplay when no videos are playing.
+  useEffect(() => {
+    const handlePlay = () => {
+      if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.stop === 'function') {
+        try { swiperRef.current.autoplay.stop(); } catch (err) { void err; }
+      }
+    };
+
+    const handlePauseOrEnd = () => {
+      try {
+        const anyPlaying = videoRefs.current && videoRefs.current.some((vv) => vv && !vv.paused);
+        if (!anyPlaying) {
+          if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.start === 'function') {
+            try { swiperRef.current.autoplay.start(); } catch (err) { void err; }
+          }
+        }
+      } catch (err) { void err; }
+    };
+
+    // Attach listeners
+    const refs = videoRefs.current || [];
+    refs.forEach((v) => {
+      if (!v) return;
+      try {
+        v.addEventListener('play', handlePlay);
+        v.addEventListener('pause', handlePauseOrEnd);
+        v.addEventListener('ended', handlePauseOrEnd);
+      } catch (err) { void err; }
+    });
+
+    return () => {
+      // Cleanup listeners
+      refs.forEach((v) => {
+        if (!v) return;
+        try {
+          v.removeEventListener('play', handlePlay);
+          v.removeEventListener('pause', handlePauseOrEnd);
+          v.removeEventListener('ended', handlePauseOrEnd);
+        } catch (err) { void err; }
+      });
+    };
+  }, [videoRefs, swiperRef]);
 
   return (
     <div className="relative w-full mx-auto p-5 my-7 bg-neutral-50">
@@ -108,47 +149,15 @@ export default function Coments() {
                   loop
                   muted
                   onClick={() => toggleAtIndex(index)}
-                  onPlay={() => {
-                    setPlaying((p) => {
-                      const copy = [...p];
-                      copy[index] = true;
-                      return copy;
-                    });
-                    // ensure swiper autoplay is stopped while a video plays
-                    if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.stop === 'function') {
-                      try { swiperRef.current.autoplay.stop(); } catch (err) { void err; }
-                    }
-                  }}
-                  onPause={() => {
-                    setPlaying((p) => {
-                      const copy = [...p];
-                      copy[index] = false;
-                      return copy;
-                    });
-                    // restart swiper autoplay when video is paused (covers native controls)
-                    if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.start === 'function') {
-                      try { swiperRef.current.autoplay.start(); } catch (err) { void err; }
-                    }
-                  }}
+                  
                   className="w-full h-full object-cover rounded-xl transition-transform duration-500 ease-in-out group-hover:scale-105 cursor-pointer"
                 >
                   <source src={item.video} type="video/mp4" />
                   Sizning brauzeringiz video formatini qo‘llab-quvvatlamaydi.
                 </video>
-                {/* non-interactive overlay so clicks reach the video or play button */}
                 <div className="absolute top-0 left-0 w-full h-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center text-white text-lg font-semibold pointer-events-none">
                   {item.title}
                 </div>
-
-                {/* centered play button shown when video is paused */}
-                <button
-                  type="button"
-                  onClick={() => toggleAtIndex(index)}
-                  className="absolute z-20 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 flex items-center justify-center text-white text-2xl pointer-events-auto"
-                  aria-label={playing[index] ? "Pause video" : "Play video"}
-                >
-                  {playing[index] ? '⏸' : '▶'}
-                </button>
               </div>
             </SwiperSlide>
           ))}
