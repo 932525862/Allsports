@@ -53,22 +53,9 @@ const CategoryPage = () => {
         const match = list.find((cat) => {
           const candidate = normalize(cat?.name?.uz);
 
-          console.log(
-            JSON.stringify({
-              candidate: cat?.name?.uz,
-
-              candidateNorm: candidate,
-
-              slug: decoded,
-
-              slugNorm: normalizedSlug,
-            })
-          );
-
           return candidate === normalizedSlug;
         });
 
-        console.log(match, "Matched category", decoded, "(decoded from slug)");
 
         if (match) {
           setSelectedCategories(match?.name?.uz ?? "");
@@ -87,7 +74,6 @@ const CategoryPage = () => {
     }
   };
 
-  console.log(`Slug based category`, selectedCategories);
 
   const handleProductFilter = async (page = 1, nameQuery = "") => {
     setLoading(true);
@@ -135,7 +121,6 @@ const CategoryPage = () => {
 
       setTotalPages(res?.data?.meta?.totalPages || 1);
 
-      console.log(`Pagination`, res?.data);
     } catch (error) {
       console.error(`Error while getting products: ${error}`);
     }

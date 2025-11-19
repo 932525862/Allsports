@@ -40,12 +40,9 @@ const CategoryOnePage = () => {
   };
   useEffect(() => {
     if (id) {
-      console.log(id, "Product Id");
       getOneById(id);
     }
   }, [id]);
-
-  console.log(data?.category?.name?.uz, "Category of that product", id);
 
   const handleCopyLink = async () => {
     try {
@@ -111,7 +108,6 @@ const CategoryOnePage = () => {
         throw new Error(`Ma'lumot yuklanmadi: ${response.statusText}`);
       const data = await response.json();
       setProducts(data?.data);
-      console.log(data?.data, "products");
     } catch (err) { 
       console.error("Maʼlumot yuklanmadi", err);
       setError(err.message || "Maʼlumot yuklanmadi");

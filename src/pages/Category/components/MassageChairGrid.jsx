@@ -14,12 +14,6 @@ const MassageChairGrid = () => {
     fetch(`${baseUrl}/api/products?category=${`Uqalash uskunalari`}`)
       .then((res) => res.json())
       .then((data) => {
-        // const searchKeywords = [
-        //   "uqalash uskunalari",
-        //   "массажное оборудование",
-        // ];
-
-        console.log(data?.data, "MassageChairGrid data");
 
         setProducts(data?.data || [])
         setLoading(false);

@@ -13,7 +13,6 @@ const CategoryGrid = () => {
       .then((data) => {
         setCategories(data?.data || []);
         setLoading(false);
-        console.log(data?.data, "categories data");
       })
       .catch((err) => {
         console.error("Ma'lumot yuklashda xatolik:", err);
