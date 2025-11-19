@@ -112,7 +112,7 @@ const CategoryOnePage = () => {
       const data = await response.json();
       setProducts(data?.data);
       console.log(data?.data, "products");
-    } catch (err) {
+    } catch (err) { 
       console.error("Maʼlumot yuklanmadi", err);
       setError(err.message || "Maʼlumot yuklanmadi");
     } finally {
