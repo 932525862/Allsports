@@ -12,15 +12,15 @@ import Grant5 from "../../assets/videos/gr5.mp4";
 import Grant6 from "../../assets/videos/gr6.mp4";
 import { useTranslation } from "react-i18next";
 import Skeleton from "react-loading-skeleton";
-import 'react-loading-skeleton/dist/skeleton.css';
+import "react-loading-skeleton/dist/skeleton.css";
 
 const videos = [
-  { video: Grant1},
-  { video: Grant2},
-  { video: Grant3},
-  { video: Grant4},
-  { video: Grant5},
-  { video: Grant6},
+  { video: Grant1 },
+  { video: Grant2 },
+  { video: Grant3 },
+  { video: Grant4 },
+  { video: Grant5 },
+  { video: Grant6 },
 ];
 
 export default function Coments() {
@@ -29,23 +29,38 @@ export default function Coments() {
   const videoRefs = useRef([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
- 
 
   const toggleAtIndex = (index) => {
     const v = videoRefs.current[index];
     if (!v) return;
     if (v.paused) {
       const p = v.play();
-      if (p && typeof p.then === 'function') p.catch(() => {});
-    
-      if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.stop === 'function') {
-        try { swiperRef.current.autoplay.stop(); } catch (err) { void err; }
+      if (p && typeof p.then === "function") p.catch(() => {});
+
+      if (
+        swiperRef.current &&
+        swiperRef.current.autoplay &&
+        typeof swiperRef.current.autoplay.stop === "function"
+      ) {
+        try {
+          swiperRef.current.autoplay.stop();
+        } catch (err) {
+          void err;
+        }
       }
     } else {
       v.pause();
-    
-      if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.start === 'function') {
-        try { swiperRef.current.autoplay.start(); } catch (err) { void err; }
+
+      if (
+        swiperRef.current &&
+        swiperRef.current.autoplay &&
+        typeof swiperRef.current.autoplay.start === "function"
+      ) {
+        try {
+          swiperRef.current.autoplay.start();
+        } catch (err) {
+          void err;
+        }
       }
     }
   };
@@ -60,7 +75,9 @@ export default function Coments() {
     videoRefs.current.forEach((v) => {
       try {
         v && v.pause();
-      } catch (err) { void err; }
+      } catch (err) {
+        void err;
+      }
     });
   }, [activeIndex]);
 
@@ -68,20 +85,39 @@ export default function Coments() {
   // and resume autoplay when no videos are playing.
   useEffect(() => {
     const handlePlay = () => {
-      if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.stop === 'function') {
-        try { swiperRef.current.autoplay.stop(); } catch (err) { void err; }
+      if (
+        swiperRef.current &&
+        swiperRef.current.autoplay &&
+        typeof swiperRef.current.autoplay.stop === "function"
+      ) {
+        try {
+          swiperRef.current.autoplay.stop();
+        } catch (err) {
+          void err;
+        }
       }
     };
 
     const handlePauseOrEnd = () => {
       try {
-        const anyPlaying = videoRefs.current && videoRefs.current.some((vv) => vv && !vv.paused);
+        const anyPlaying =
+          videoRefs.current && videoRefs.current.some((vv) => vv && !vv.paused);
         if (!anyPlaying) {
-          if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.start === 'function') {
-            try { swiperRef.current.autoplay.start(); } catch (err) { void err; }
+          if (
+            swiperRef.current &&
+            swiperRef.current.autoplay &&
+            typeof swiperRef.current.autoplay.start === "function"
+          ) {
+            try {
+              swiperRef.current.autoplay.start();
+            } catch (err) {
+              void err;
+            }
           }
         }
-      } catch (err) { void err; }
+      } catch (err) {
+        void err;
+      }
     };
 
     // Attach listeners
@@ -89,10 +125,12 @@ export default function Coments() {
     refs.forEach((v) => {
       if (!v) return;
       try {
-        v.addEventListener('play', handlePlay);
-        v.addEventListener('pause', handlePauseOrEnd);
-        v.addEventListener('ended', handlePauseOrEnd);
-      } catch (err) { void err; }
+        v.addEventListener("play", handlePlay);
+        v.addEventListener("pause", handlePauseOrEnd);
+        v.addEventListener("ended", handlePauseOrEnd);
+      } catch (err) {
+        void err;
+      }
     });
 
     return () => {
@@ -100,10 +138,12 @@ export default function Coments() {
       refs.forEach((v) => {
         if (!v) return;
         try {
-          v.removeEventListener('play', handlePlay);
-          v.removeEventListener('pause', handlePauseOrEnd);
-          v.removeEventListener('ended', handlePauseOrEnd);
-        } catch (err) { void err; }
+          v.removeEventListener("play", handlePlay);
+          v.removeEventListener("pause", handlePauseOrEnd);
+          v.removeEventListener("ended", handlePauseOrEnd);
+        } catch (err) {
+          void err;
+        }
       });
     };
   }, [videoRefs, swiperRef]);
@@ -141,7 +181,10 @@ export default function Coments() {
           className="max-w-7xl"
         >
           {videos.map((item, index) => (
-            <SwiperSlide key={index} className="flex items-center justify-center">
+            <SwiperSlide
+              key={index}
+              className="flex items-center justify-center"
+            >
               <div className="w-[230px] max-[550px]:w-full aspect-[9/16] relative group shadow-md rounded-xl overflow-hidden">
                 <video
                   ref={(el) => (videoRefs.current[index] = el)}
@@ -149,7 +192,6 @@ export default function Coments() {
                   loop
                   muted
                   onClick={() => toggleAtIndex(index)}
-                  
                   className="w-full h-full object-cover rounded-xl transition-transform duration-500 ease-in-out group-hover:scale-105 cursor-pointer"
                 >
                   <source src={item.video} type="video/mp4" />

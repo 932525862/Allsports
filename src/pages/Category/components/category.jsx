@@ -25,13 +25,13 @@ const CategoryOnePage = () => {
 
   const { id } = useParams();
 
-  const base_url = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const upload_base = import.meta.env.VITE_API_UPLOAD_BASE;
   const [categName, setCategName] = useState();
 
   const getOneById = async (id) => {
     try {
-      const data = await axios.get(`${base_url}/api/products/${id}`);
+      const data = await axios.get(`${BASE_URL}/api/products/${id}`);
       setData(data.data.data);
       setCategName(data?.data?.data?.category?.name?.uz);
     } catch (error) {
@@ -102,13 +102,13 @@ const CategoryOnePage = () => {
   const getProducts = async (category) => {
     try {
       const response = await fetch(
-        `${base_url}/api/products?category=${category}`
+        `${BASE_URL}/api/products?category=${category}`
       );
       if (!response.ok)
         throw new Error(`Ma'lumot yuklanmadi: ${response.statusText}`);
       const data = await response.json();
       setProducts(data?.data);
-    } catch (err) { 
+    } catch (err) {
       console.error("Maʼlumot yuklanmadi", err);
       setError(err.message || "Maʼlumot yuklanmadi");
     } finally {

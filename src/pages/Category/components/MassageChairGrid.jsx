@@ -5,17 +5,16 @@ import { useTranslation } from "react-i18next";
 const MassageChairGrid = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const {  i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const lang = ["uz", "ru"].includes(i18n.language) ? i18n.language : "uz";
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    fetch(`${baseUrl}/api/products?category=${`Uqalash uskunalari`}`)
+    fetch(`${BASE_URL}/api/products?category=${`Uqalash uskunalari`}`)
       .then((res) => res.json())
       .then((data) => {
-
-        setProducts(data?.data || [])
+        setProducts(data?.data || []);
         setLoading(false);
       })
       .catch((err) => {
@@ -35,7 +34,6 @@ const MassageChairGrid = () => {
       ) : (
         <p>Massaj uskunalari topilmadi.</p>
       )}
-
     </div>
   );
 };

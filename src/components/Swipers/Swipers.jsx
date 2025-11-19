@@ -20,12 +20,12 @@ export default function SwiperSlides() {
   };
 
   const [loading, setLoading] = useState(true);
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const uploadUrl = import.meta.env.VITE_API_UPLOAD_BASE;
   const [baner, setBaner] = useState([]);
 
   useEffect(() => {
-    fetch(`${baseUrl}/api/banners`)
+    fetch(`${BASE_URL}/api/banners`)
       .then((res) => res.json())
       .then((data) => {
         setBaner(data?.data || []);

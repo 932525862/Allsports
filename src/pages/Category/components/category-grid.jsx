@@ -5,10 +5,10 @@ const CategoryGrid = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    fetch(`${baseUrl}/api/categories/with-one-product`)
+    fetch(`${BASE_URL}/api/categories/with-one-product`)
       .then((res) => res.json())
       .then((data) => {
         setCategories(data?.data || []);

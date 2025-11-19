@@ -8,9 +8,12 @@ function Catalog() {
 
   return (
     <section className="bg-neutral-50 py-16">
-       <Helmet>
+      <Helmet>
         <title>Grand Fitness</title>
-        <meta name="description" content="Zamonaviy trenajorlar, sport anjomlari va massaj qurilmalari" />
+        <meta
+          name="description"
+          content="Zamonaviy trenajorlar, sport anjomlari va massaj qurilmalari"
+        />
       </Helmet>
       <div className="max-w-7xl px-5 mx-auto max-md:px-3">
         <div className="flex flex-col items-center relative">

@@ -47,7 +47,8 @@ const MassageCategoryCard = ({ product }) => {
 
         {productPrice ? (
           <p className="text-neutral-500 lg:text-[15px] font-one text-[12px]">
-            <span>{productPrice.toLocaleString("uz-UZ")}</span> {t("categories.so'm")}
+            <span>{productPrice.toLocaleString("uz-UZ")}</span>{" "}
+            {t("categories.so'm")}
           </p>
         ) : (
           <p className="text-neutral-400 text-md">Narx ko‘rsatilmagan</p>

@@ -1,7 +1,7 @@
-import aboutBg from '../../assets/decor-line-bg.svg';
-import aboutImg from '../../assets/homeAbout.png';
-import decorLeft from '../../assets/about-image-line.svg';
-import { useTranslation } from 'react-i18next'; // i18n chaqirildi
+import aboutBg from "../../assets/decor-line-bg.svg";
+import aboutImg from "../../assets/homeAbout.png";
+import decorLeft from "../../assets/about-image-line.svg";
+import { useTranslation } from "react-i18next"; // i18n chaqirildi
 
 function AboutTop() {
   const { t } = useTranslation(); // t() funksiyasi chaqirildi

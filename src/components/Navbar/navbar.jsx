@@ -23,7 +23,7 @@ const Navbar = () => {
     setLanguage(currentLang);
   }, []);
 
-  const base_url = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
@@ -40,7 +40,9 @@ const Navbar = () => {
       return;
     }
     try {
-      const response = await axios.get(`${base_url}/api/products?name=${trimmed}`);
+      const response = await axios.get(
+        `${BASE_URL}/api/products?name=${trimmed}`
+      );
       setProducts(response.data?.data || []);
       setShowDropdown(true);
     } catch (error) {
@@ -51,8 +53,10 @@ const Navbar = () => {
   useEffect(() => {
     const handler = (e) => {
       if (
-        (searchBoxRef.current && !searchBoxRef.current.contains(e.target)) &&
-        (mobileSearchRef.current && !mobileSearchRef.current.contains(e.target))
+        searchBoxRef.current &&
+        !searchBoxRef.current.contains(e.target) &&
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(e.target)
       ) {
         setShowDropdown(false);
       }
@@ -91,7 +95,10 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4 relative" ref={searchBoxRef}>
+          <div
+            className="hidden lg:flex items-center gap-4 relative"
+            ref={searchBoxRef}
+          >
             <div className="relative max-w-xs w-full">
               <input
                 type="text"
@@ -126,7 +133,9 @@ const Navbar = () => {
                       className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 cursor-pointer"
                     >
                       <img
-                        src={`${import.meta.env.VITE_API_UPLOAD_BASE}${product.images?.[0]?.path}`}
+                        src={`${import.meta.env.VITE_API_UPLOAD_BASE}${
+                          product.images?.[0]?.path
+                        }`}
                         alt={product.name?.uz}
                         className="w-14 h-14 object-contain rounded-md"
                       />
@@ -165,7 +174,11 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               className="focus:outline-none"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -202,8 +215,11 @@ const Navbar = () => {
 
       <div
         ref={mobileSearchRef}
-        className={`lg:hidden transition-all duration-300 ${showMobileSearch ? "max-h-[420px] py-3 opacity-100 visible" : "max-h-0 py-0 opacity-0 invisible"
-          } bg-white px-4 shadow-sm border-b relative overflow-visible`}
+        className={`lg:hidden transition-all duration-300 ${
+          showMobileSearch
+            ? "max-h-[420px] py-3 opacity-100 visible"
+            : "max-h-0 py-0 opacity-0 invisible"
+        } bg-white px-4 shadow-sm border-b relative overflow-visible`}
       >
         <div className="relative">
           <input
@@ -236,7 +252,9 @@ const Navbar = () => {
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 cursor-pointer"
                 >
                   <img
-                    src={`${import.meta.env.VITE_API_UPLOAD_BASE}${product.images?.[0]?.path}`}
+                    src={`${import.meta.env.VITE_API_UPLOAD_BASE}${
+                      product.images?.[0]?.path
+                    }`}
                     alt={product.name?.uz}
                     className="w-12 h-12 object-contain rounded-md"
                   />
@@ -254,8 +272,6 @@ const Navbar = () => {
           )}
         </div>
       </div>
-
-
     </>
   );
 };

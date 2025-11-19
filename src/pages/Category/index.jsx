@@ -18,7 +18,7 @@ const CategoryPage = () => {
 
   const { slug } = useParams();
 
-  const base_url = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [categories, setCategories] = useState([]);
 
@@ -39,7 +39,7 @@ const CategoryPage = () => {
     setLoading(true);
 
     try {
-      const res = await axios.get(`${base_url}/api/categories`);
+      const res = await axios.get(`${BASE_URL}/api/categories`);
 
       const list = res?.data?.data ?? [];
 
@@ -55,7 +55,6 @@ const CategoryPage = () => {
 
           return candidate === normalizedSlug;
         });
-
 
         if (match) {
           setSelectedCategories(match?.name?.uz ?? "");
@@ -74,7 +73,6 @@ const CategoryPage = () => {
     }
   };
 
-
   const handleProductFilter = async (page = 1, nameQuery = "") => {
     setLoading(true);
 
@@ -91,7 +89,7 @@ const CategoryPage = () => {
       if (nameQuery) queryParams.append("name", nameQuery);
 
       const res = await axios.get(
-        `${base_url}/api/products?${queryParams.toString()}&page=${page}&limit=10`
+        `${BASE_URL}/api/products?${queryParams.toString()}&page=${page}&limit=10`
       );
 
       setProducts(res?.data?.data || []);
