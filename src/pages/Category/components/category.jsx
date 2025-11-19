@@ -1,45 +1,51 @@
-import { useState, useEffect, useRef } from 'react'
-import { Share2, Copy, X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { UserInfoDialog } from '../modals/user-info'
-// import { toast } from 'sonner'
-import { useParams, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { useTranslation } from 'react-i18next'
-import { ProductCard } from './product-card'
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
-import { toast } from 'sonner'
+import { useState, useEffect, useRef } from "react";
+import { Share2, Copy, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { UserInfoDialog } from "../modals/user-info";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useTranslation } from "react-i18next";
+import { ProductCard } from "./product-card";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { toast } from "sonner";
 
 const CategoryOnePage = () => {
-  const [showImageModal, setShowImageModal] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [showShareOptions, setShowShareOptions] = useState(false)
-  const { i18n } = useTranslation()
-  const lang = ['uz', 'ru'].includes(i18n.language) ? i18n.language : 'uz'
-  const navigate = useNavigate()
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const { i18n } = useTranslation();
+  const lang = ["uz", "ru"].includes(i18n.language) ? i18n.language : "uz";
+  const navigate = useNavigate();
 
-  const [data, setData] = useState()
-  const shareRef = useRef(null)
+  const [data, setData] = useState();
+  const shareRef = useRef(null);
 
-  const { id } = useParams()
+  const { id } = useParams();
 
-  const base_url = import.meta.env.VITE_API_BASE_URL
-  const upload_base = import.meta.env.VITE_API_UPLOAD_BASE
+  const base_url = import.meta.env.VITE_API_BASE_URL;
+  const upload_base = import.meta.env.VITE_API_UPLOAD_BASE;
+  const [categName, setCategName] = useState();
 
   const getOneById = async (id) => {
     try {
-      const data = await axios.get(`${base_url}/api/products/${id}`)
+      const data = await axios.get(`${base_url}/api/products/${id}`);
       setData(data.data.data);
+      setCategName(data?.data?.data?.category?.name?.uz);
     } catch (error) {
-      console.error('Xatolik:', error)
+      console.error("Xatolik:", error);
     }
-  }
+  };
   useEffect(() => {
-    if (id) getOneById(id)
-  }, [id])
+    if (id) {
+      console.log(id, "Product Id");
+      getOneById(id);
+    }
+  }, [id]);
+
+  console.log(data?.category?.name?.uz, "Category of that product", id);
 
   const handleCopyLink = async () => {
     try {
@@ -47,70 +53,78 @@ const CategoryOnePage = () => {
         title: data?.name?.uz || "Mahsulot",
         text: `Mahsulotni ko'ring: ${data?.name?.uz}`,
         url: window.location.href,
-      }
+      };
 
       if (navigator.share) {
-        await navigator.share(shareData)
-        toast.success("Ulashildi!") // if you want to show this
+        await navigator.share(shareData);
+        toast.success("Ulashildi!"); // if you want to show this
       } else {
-        await navigator.clipboard.writeText(window.location.href)
-        toast.success("Havola nusxalandi!")
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Havola nusxalandi!");
       }
     } catch (err) {
-      console.error("Ulashishda xatolik yuz berdi", err)
-      toast.error("Nusxalashda xatolik yuz berdi")
+      console.error("Ulashishda xatolik yuz berdi", err);
+      toast.error("Nusxalashda xatolik yuz berdi");
     }
 
-    setShowShareOptions(false)
-  }
-
+    setShowShareOptions(false);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (shareRef.current && !shareRef.current.contains(event.target)) {
-        setShowShareOptions(false)
+        setShowShareOptions(false);
       }
-    }
+    };
     if (showShareOptions) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener("mousedown", handleClickOutside);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [showShareOptions])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showShareOptions]);
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? data.images.length - 1 : prevIndex - 1))
-  }
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? data.images.length - 1 : prevIndex - 1
+    );
+  };
   const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex === data.images.length - 1 ? 0 : prevIndex + 1))
-  }
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === data.images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
 
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const getProducts = async () => {
+  const getProducts = async (category) => {
     try {
-      const response = await fetch(`${base_url}/api/products`)
-      if (!response.ok) throw new Error(`Ma'lumot yuklanmadi: ${response.statusText}`)
-      const data = await response.json()
-      setProducts(data?.data)
+      const response = await fetch(
+        `${base_url}/api/products?category=${category}`
+      );
+      if (!response.ok)
+        throw new Error(`Ma'lumot yuklanmadi: ${response.statusText}`);
+      const data = await response.json();
+      setProducts(data?.data);
+      console.log(data?.data, "products");
     } catch (err) {
-      console.error('Maʼlumot yuklanmadi', err)
-      setError(err.message || 'Maʼlumot yuklanmadi')
+      console.error("Maʼlumot yuklanmadi", err);
+      setError(err.message || "Maʼlumot yuklanmadi");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    getProducts()
-  }, [])
-
+    if (categName) {
+      getProducts(categName);
+    }
+  }, [categName]);
 
   if (loading || !data) {
     return (
@@ -119,20 +133,22 @@ const CategoryOnePage = () => {
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 mt-6">
           <Skeleton height={400} />
           <div>
-            <Skeleton count={5} height={30} style={{ marginBottom: '10px' }} />
+            <Skeleton count={5} height={30} style={{ marginBottom: "10px" }} />
           </div>
         </div>
-        <h3 className="font-bold text-2xl mt-10 uppercase">Sizga yoqishi mumkin</h3>
+        <h3 className="font-bold text-2xl mt-10 uppercase">
+          Sizga yoqishi mumkin
+        </h3>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 mt-4">
           {[...Array(4)].map((_, idx) => (
             <Skeleton key={idx} height={250} />
           ))}
         </div>
       </div>
-    )
+    );
   }
 
-  if (error) return <p>Error: {error}</p>
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <>
@@ -184,8 +200,8 @@ const CategoryOnePage = () => {
                     <button
                       className="absolute z-10 -left-0 top-1/2 transform -translate-y-1/2 bg-black/90 hover:bg-black/50 text-gray-100 p-1 rounded-full shadow transition"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handlePrevImage()
+                        e.stopPropagation();
+                        handlePrevImage();
                       }}
                     >
                       <ChevronLeft className="w-5 h-5" />
@@ -205,8 +221,8 @@ const CategoryOnePage = () => {
                     <button
                       className="absolute z-10 -right-0 top-1/2 transform -translate-y-1/2 bg-black/90 hover:bg-black/50 text-gray-100 p-1 rounded-full shadow transition"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleNextImage()
+                        e.stopPropagation();
+                        handleNextImage();
                       }}
                     >
                       <ChevronRight className="w-5 h-5" />
@@ -257,14 +273,17 @@ const CategoryOnePage = () => {
               </div>
               <div className="">
                 <div className=" line-through text-gray-700">
-                  {Number(data?.price * 1.5).toLocaleString('ru-RU')} <span className="">so'm</span>
+                  {Number(data?.price * 1.5).toLocaleString("ru-RU")}{" "}
+                  <span className="">so'm</span>
                 </div>
                 <p className="font-one text-sm">Chegirmadagi narx</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-600">
-                    {Number(data?.price)?.toLocaleString('ru-RU')}
+                    {Number(data?.price)?.toLocaleString("ru-RU")}
                   </span>
-                  <span className="text-lg sm:text-xl font-sans text-amber-600">so'm</span>
+                  <span className="text-lg sm:text-xl font-sans text-amber-600">
+                    so'm
+                  </span>
                 </div>
               </div>
               <div className="my-5 flex gap-5 md:gap-10">
@@ -293,13 +312,19 @@ const CategoryOnePage = () => {
             </div>
           </div>
 
-          <h3 className="font-bold text-2xl mt-10 uppercase">Sizga yoqishi mumkin</h3>
+          <h3 className="font-bold text-2xl mt-10 uppercase">
+            Sizga yoqishi mumkin
+          </h3>
           <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 mt-4">
-            {products && Array.from(products)?.map((product) => (
-              <div key={product.id} onClick={() => navigate(`/category/id/${product.id}`)}>
-                <ProductCard product={product} />
-              </div>
-            ))}
+            {products &&
+              Array.from(products)?.map((product) => (
+                <div
+                  key={product.id}
+                  onClick={() => navigate(`/category/id/${product.id}`)}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
           </div>
         </div>
 
@@ -323,8 +348,8 @@ const CategoryOnePage = () => {
                     <button
                       className="absolute z-10 -left-3 md:-left-5 top-1/2 transform -translate-y-1/2 bg-gray-600 hover:bg-black/50 text-gray-100 p-1 rounded-full shadow transition"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handlePrevImage()
+                        e.stopPropagation();
+                        handlePrevImage();
                       }}
                     >
                       <ChevronLeft className="w-7 h-7" />
@@ -339,8 +364,8 @@ const CategoryOnePage = () => {
                     <button
                       className="absolute z-10 -right-3 md:-right-5 top-1/2 transform -translate-y-1/2 bg-gray-600 hover:bg-black/50 text-gray-100 p-1 rounded-full shadow transition"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleNextImage()
+                        e.stopPropagation();
+                        handleNextImage();
                       }}
                     >
                       <ChevronRight className="w-7 h-7" />
@@ -349,14 +374,17 @@ const CategoryOnePage = () => {
                 </div>
               </div>
             </div>
-            <div className="fixed inset-0 z-40" onClick={() => setShowImageModal(false)} />
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setShowImageModal(false)}
+            />
           </>
         )}
       </div>
 
       {open && <UserInfoDialog open={open} close={() => setOpen(false)} />}
     </>
-  )
-}
+  );
+};
 
-export default CategoryOnePage
+export default CategoryOnePage;
