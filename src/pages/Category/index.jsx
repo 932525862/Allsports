@@ -106,26 +106,6 @@ const CategoryPage = () => {
     }
   };
 
-  const getProducts = async () => {
-    try {
-      const res = await axios.get(`${base_url}/api/products?page=1&limit=10`);
-      let data = res?.data?.data || [];
-
-      if (slug) {
-        data = data.filter(
-          (item) => item.category?.name?.uz === decodeURIComponent(slug)
-        );
-      }
-
-      setProducts(data);
-
-      setTotalPages(res?.data?.meta?.totalPages || 1);
-
-    } catch (error) {
-      console.error(`Error while getting products: ${error}`);
-    }
-  };
-
   useEffect(() => {
     getCategories();
   }, [slug]);
