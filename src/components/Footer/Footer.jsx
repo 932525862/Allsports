@@ -88,10 +88,10 @@ function Footer() {
                   {t("footer.phoneTitle")}
                 </div>
                 <a
-                  href="tel:+998977052027"
+                  href="tel:+998990200700"
                   className="font-medium text-gray-900"
                 >
-                  +998 97 705 20 27
+                  +998 99 020 07 00
                 </a>
               </li>
             </ul>

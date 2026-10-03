@@ -2,6 +2,8 @@ import { Toaster } from 'sonner'
 import RouteProvider from './routes/route'
 import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import FloatingContact from './components/FloatingContact/FloatingContact'
+
 const App = () => {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -10,6 +12,7 @@ const App = () => {
   return (
     <>
       <RouteProvider />
+      <FloatingContact />
       <Toaster richColors position="top-center" />
     </>
   )
